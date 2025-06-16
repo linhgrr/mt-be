@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
+import connectDB from '@/lib/mongodb';
+import Translation from '@/models/Translation';
 
 console.log("Environment variables loaded");
 
@@ -10,6 +12,7 @@ export interface TranslationRequest {
 export interface TranslationResponse {
   original_text: string;
   english_translation: string;
+  translation_id?: string;
 }
 
 // Get API keys from environment variables
@@ -141,6 +144,20 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await translateJapaneseText(body.text);
+    
+    // Save translation to database
+    try {
+      await connectDB();
+      const translation = new Translation({
+        japanese: result.original_text,
+        english: result.english_translation
+      });
+      const savedTranslation = await translation.save();
+      result.translation_id = savedTranslation._id.toString();
+    } catch (dbError) {
+      console.error('Database save error:', dbError);
+      // Continue without saving to DB - don't fail the translation
+    }
     
     return NextResponse.json(result, {
       headers: {

@@ -18,8 +18,9 @@ Translation API Backend for Japanese Railway Announcements using Google Gemini A
    ```
 
 2. **Configure environment variables:**
-   Create a `.env.local` file and add your Gemini API keys:
+   Create a `.env.local` file and add your API keys:
    ```env
+   # Google Gemini API Keys (add up to 8 keys for rotation)
    GEMINI_API_KEY_1=your_api_key_1_here
    GEMINI_API_KEY_2=your_api_key_2_here
    GEMINI_API_KEY_3=your_api_key_3_here
@@ -29,7 +30,11 @@ Translation API Backend for Japanese Railway Announcements using Google Gemini A
    GEMINI_API_KEY_7=your_api_key_7_here
    GEMINI_API_KEY_8=your_api_key_8_here
    
+   # Frontend URL for CORS (optional, defaults to *)
    FRONTEND_URL=http://localhost:5173
+   
+   # MongoDB connection string
+   MONGO_URL=mongodb+srv://nhatquangpx:8sotamnhe@gymmanagement.8jghrjf.mongodb.net/?retryWrites=true&w=majority&appName=GymManagement
    ```
 
 3. **Run the development server:**
