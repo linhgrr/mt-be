@@ -10,10 +10,10 @@ export interface RatingRequest {
 // PUT endpoint to update translation rating
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body: RatingRequest = await request.json();
     
     if (!body.rating || body.rating < 1 || body.rating > 5) {
