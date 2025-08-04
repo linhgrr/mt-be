@@ -1,8 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ITranslation extends Document {
-  japanese: string;
-  english: string;
+  sourceText: string;
+  targetText: string;
+  sourceLanguage: 'ja' | 'en';
+  targetLanguage: 'ja' | 'en';
+  // Keep legacy fields for backward compatibility
+  japanese?: string;
+  english?: string;
   rating?: number;
   comment?: string;
   createdAt: Date;
@@ -10,14 +15,35 @@ export interface ITranslation extends Document {
 }
 
 const TranslationSchema: Schema = new Schema({
-  japanese: {
+  sourceText: {
     type: String,
     required: true,
     trim: true
   },
-  english: {
+  targetText: {
     type: String,
     required: true,
+    trim: true
+  },
+  sourceLanguage: {
+    type: String,
+    required: true,
+    enum: ['ja', 'en'],
+    default: 'ja'
+  },
+  targetLanguage: {
+    type: String,
+    required: true,
+    enum: ['ja', 'en'],
+    default: 'en'
+  },
+  // Keep legacy fields for backward compatibility
+  japanese: {
+    type: String,
+    trim: true
+  },
+  english: {
+    type: String,
     trim: true
   },
   rating: {
@@ -38,5 +64,6 @@ const TranslationSchema: Schema = new Schema({
 // Index for better query performance
 TranslationSchema.index({ rating: 1 });
 TranslationSchema.index({ createdAt: -1 });
+TranslationSchema.index({ sourceLanguage: 1, targetLanguage: 1 });
 
 export default mongoose.models.Translation || mongoose.model<ITranslation>('Translation', TranslationSchema); 

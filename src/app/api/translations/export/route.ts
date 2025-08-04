@@ -11,15 +11,25 @@ export async function GET(request: NextRequest) {
     const translations = await Translation.find({ 
       rating: { $gte: 4 } 
     })
-    .select('japanese english rating comment createdAt')
+    .select('japanese english sourceText targetText sourceLanguage targetLanguage rating comment createdAt')
     .sort({ createdAt: -1 })
     .lean();
     
-    // Transform to the requested format
-    const exportData = translations.map(translation => ({
-      japanese: translation.japanese,
-      english: translation.english
-    }));
+    // Transform to the requested format, handling both legacy and new schema
+    const exportData = translations.map(translation => {
+      // Use new schema if available, fallback to legacy
+      const japanese = translation.sourceLanguage === 'ja' ? translation.sourceText : 
+                      translation.targetLanguage === 'ja' ? translation.targetText :
+                      translation.japanese;
+      const english = translation.sourceLanguage === 'en' ? translation.sourceText :
+                     translation.targetLanguage === 'en' ? translation.targetText :
+                     translation.english;
+      
+      return {
+        japanese: japanese || translation.japanese,
+        english: english || translation.english
+      };
+    });
     
     // Create response with proper headers for file download
     const response = NextResponse.json(exportData, {
