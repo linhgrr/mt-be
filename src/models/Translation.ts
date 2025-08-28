@@ -3,8 +3,8 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface ITranslation extends Document {
   sourceText: string;
   targetText: string;
-  sourceLanguage: 'ja' | 'en';
-  targetLanguage: 'ja' | 'en';
+  sourceLanguage: 'ja' | 'en' | 'zh' | 'ko';
+  targetLanguage: 'ja' | 'en' | 'zh' | 'ko';
   // Keep legacy fields for backward compatibility
   japanese?: string;
   english?: string;
@@ -28,13 +28,13 @@ const TranslationSchema: Schema = new Schema({
   sourceLanguage: {
     type: String,
     required: true,
-    enum: ['ja', 'en'],
+    enum: ['ja', 'en', 'zh', 'ko'],
     default: 'ja'
   },
   targetLanguage: {
     type: String,
     required: true,
-    enum: ['ja', 'en'],
+    enum: ['ja', 'en', 'zh', 'ko'],
     default: 'en'
   },
   // Keep legacy fields for backward compatibility
